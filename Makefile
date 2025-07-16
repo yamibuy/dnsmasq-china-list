@@ -5,8 +5,6 @@ SHELL=bash
 
 raw:
 	sed -e 's|^server=/\(.*\)/114.114.114.114$$|\1|' accelerated-domains.china.conf | grep -Ev -e '^#' -e '^$$' > accelerated-domains.china.raw.txt
-	sed -e 's|^server=/\(.*\)/114.114.114.114$$|\1|' google.china.conf | grep -Ev -e '^#' -e '^$$' > google.china.raw.txt
-	sed -e 's|^server=/\(.*\)/114.114.114.114$$|\1|' apple.china.conf | grep -Ev -e '^#' -e '^$$' > apple.china.raw.txt
 
 dnsmasq: raw
 	sed -e 's|\(.*\)|server=/\1/$(SERVER)|' accelerated-domains.china.raw.txt > accelerated-domains.china.dnsmasq.conf
@@ -39,10 +37,9 @@ endif
 
 bind: raw
 	sed -e 's|\(.*\)|zone "\1." {type forward; forwarders { $(SERVER); }; };|' accelerated-domains.china.raw.txt > accelerated-domains.china.bind.conf
-	sed -e 's|\(.*\)|zone "\1." {type forward; forwarders { $(SERVER); }; };|' google.china.raw.txt > google.china.bind.conf
-	sed -e 's|\(.*\)|zone "\1." {type forward; forwarders { $(SERVER); }; };|' apple.china.raw.txt > apple.china.bind.conf
+
 ifeq ($(NEWLINE),DOS)
-	sed -i 's/\r*$$/\r/' accelerated-domains.china.bind.conf google.china.bind.conf apple.china.bind.conf
+	sed -i 's/\r*$$/\r/' accelerated-domains.china.bind.conf
 endif
 
 dnscrypt-proxy: raw
